@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "random_delay_mean_delta_w": 0.5602965537059298,
+  "real_mean_delta_w": 1.1581878311635259,
+  "real_minus_random": 0.5978912774575961,
+  "real_minus_shuffled": 1.6581878311635259,
+  "real_minus_zero_delay": 0.17780299809290523,
+  "shuffled_mean_delta_w": -0.5,
+  "trials": 64,
+  "zero_delay_mean_delta_w": 0.9803848330706206
+}

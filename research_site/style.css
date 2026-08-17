@@ -1,0 +1,28 @@
+*:focus{outline:2px solid #005bb5;outline-offset:2px}
+body{margin:0;font-family:Inter,system-ui, sans-serif;line-height:1.6;color:#111;background:#f5f7fb}
+header{background:#0b1120;color:#f8fafc;padding:22px 24px;border-bottom:1px solid rgba(255,255,255,.06)}
+.header-inner{display:grid;grid-template-columns:1fr auto;gap:24px;max-width:1180px;margin:0 auto}
+header h1{margin:0;font-size:clamp(2rem,2.5vw,3rem)}
+header p{margin:.75rem 0 0;color:#cbd5e1;max-width:44rem}
+nav{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+nav a{color:#a5b4fc;text-decoration:none;font-size:.95rem;padding:.35rem .6rem;border-radius:999px;transition:.2s background}
+nav a:hover{background:rgba(165,180,252,.12);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:28px 24px 48px}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:22px;padding:28px;box-shadow:0 20px 80px rgba(15,23,42,.06);margin-bottom:24px}
+.panel h2{margin-top:0;font-size:1.8rem;color:#111827}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:18px}
+.stage-box{border-left:4px solid #4338ca;padding:18px 18px 18px 22px;margin-bottom:16px;background:#f8fafc;border-radius:12px}
+.callout{background:#eff6ff;border:1px solid #dbeafe;border-radius:14px;padding:18px;margin-top:18px}
+.code-block, pre{background:#0f172a;color:#f8fafc;border-radius:14px;padding:16px;overflow:auto}
+table{width:100%;border-collapse:collapse;margin:18px 0}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #e5e7eb}
+th{background:#eef2ff;font-weight:700}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}
+.metric-card{background:#f8fafc;border:1px solid #e0e7ff;border-radius:14px;padding:18px}
+.metric-card strong{display:block;margin-bottom:.45rem;color:#1e293b}
+.bar-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin:.35rem 0}
+.bar-track{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;background:#4338ca;border-radius:999px}
+button{border:none;background:#4338ca;color:#fff;padding:.8rem 1.1rem;border-radius:999px;cursor:pointer;font-weight:600;transition:.2s background}
+button:hover{background:#3730a3}
+@media(max-width:720px){.header-inner{grid-template-columns:1fr};nav{justify-content:flex-start}}

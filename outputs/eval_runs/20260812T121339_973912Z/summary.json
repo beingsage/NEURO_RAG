@@ -1,0 +1,342 @@
+{
+  "evaluations": {
+    "binding_index": {
+      "binding_index": {
+        "graph->sql": 0.7904761904761904,
+        "graph->text": 0.0,
+        "sql->graph": 0.0,
+        "sql->text": 0.0,
+        "text->graph": 0.0,
+        "text->sql": 0.6702127659574468
+      }
+    },
+    "cera": {
+      "cera_matrix": {
+        "graph": {
+          "sql": 0.09431818181818181,
+          "text": 0.0
+        },
+        "sql": {
+          "graph": 0.0,
+          "text": 0.0
+        },
+        "text": {
+          "graph": 0.0,
+          "sql": 0.0715909090909091
+        }
+      }
+    },
+    "encoder_reconstructibility": {
+      "age_abs_error": 0.4453742135943308,
+      "category_exact_match": true,
+      "decoded_row": {
+        "age": 30.44537421359433,
+        "city": "NYC",
+        "dept": "AI",
+        "role": "Engineer",
+        "salary": 86111.06597227867
+      },
+      "graph_delay_abs_error_ms": 0.0,
+      "graph_edge": [
+        0,
+        "WORKS_AT",
+        1
+      ],
+      "graph_expected_delay_ms": 3.0,
+      "graph_measured_delay_ms": 3.0,
+      "passed": true,
+      "salary_abs_error": 1111.0659722786659,
+      "sql_row": {
+        "age": 30,
+        "city": "NYC",
+        "dept": "AI",
+        "role": "Engineer",
+        "salary": 85000
+      }
+    },
+    "engram_stability": {
+      "coefficient_of_variation": 0.13884463226978314,
+      "engram_size_variance": 3.81,
+      "mean_jaccard": 0.8310679516561871,
+      "mean_size": 12.3,
+      "passed": true,
+      "repeats": 10,
+      "std_jaccard": 0.11538932413890521
+    },
+    "multimodal_binding": {
+      "activation_delta": 8,
+      "control_ca3_active": 6,
+      "control_overlap": 0.6,
+      "control_sql_cue": {
+        "age": 58,
+        "city": "Austin",
+        "dept": "Ops",
+        "role": "Analyst",
+        "salary": 12500
+      },
+      "graph_metrics": {
+        "ca3_overlap_pct": 5.833333333333333,
+        "edge_accuracy": 0.0,
+        "graph_recon_top_overlap": 0.0,
+        "relation_accuracy": 0.0,
+        "relation_confidence": 0.9960450493057906,
+        "relation_prediction": "MANAGES",
+        "source_node_accuracy": 0.6,
+        "source_node_classification": 0.0,
+        "src_neurons_active": 3,
+        "structure_accuracy": 0.26666666666666666,
+        "target_node_accuracy": 0.2,
+        "target_node_classification": 0.0,
+        "temporal_delay_accuracy": 0.6,
+        "tgt_neurons_active": 1
+      },
+      "learned_ca3_active": 14,
+      "overlap_delta": 0.0,
+      "partial_sql_cue": {
+        "age": 30,
+        "salary": 85000
+      },
+      "passed": true,
+      "relation_confidence": 0.9960450493057906,
+      "relation_prediction": "MANAGES",
+      "target_episode_id": 0,
+      "target_overlap": 0.6
+    },
+    "pattern_completion": {
+      "accuracy": 1.0,
+      "cue_fraction": 0.5333333333333333,
+      "cue_size": 8,
+      "mean_best_impostor_overlap": 0.05043290043290043,
+      "mean_cue_overlap": 1.0,
+      "mean_target_overlap": 0.5333333333333333,
+      "passed": true,
+      "pattern_count": 10,
+      "pattern_size": 15,
+      "retrieved_size_mean": 8.0,
+      "retrieved_size_std": 0.0
+    },
+    "pattern_separation": {
+      "dg_jaccard_mean": 0.8181818181818181,
+      "input_jaccard_mean": 0.8362068965517242,
+      "passed": true,
+      "separation_gain_mean": 0.026806526806526842
+    },
+    "polychronous_binding": {
+      "arrival_errors_ms": {
+        "graph": 0.9837126551573157,
+        "sql": 1.0000000000000004,
+        "text": 0.0
+      },
+      "coincidence": {
+        "within_0.5ms": 0.3333333333333333,
+        "within_1.0ms": 0.6666666666666666,
+        "within_2.0ms": 1.0
+      },
+      "mean_abs_error_ms": 0.6612375517191054,
+      "modality_arrivals_ms": {
+        "graph": 5.123620356542087,
+        "sql": 3.139907701384771,
+        "text": 4.139907701384772
+      },
+      "passed": true,
+      "std_abs_error_ms": 0.4676128343356382,
+      "target_time_ms": 4.139907701384772
+    },
+    "polychronous_binding_gain": {
+      "pbg_vs_random": 0.6666666666666666,
+      "pbg_vs_zero": 1.0,
+      "random_delay_mean_relation_acc": 0.75,
+      "structured_mean_relation_acc": 0.5,
+      "zero_delay_mean_relation_acc": 0.5
+    },
+    "stdp_causality": {
+      "passed": true,
+      "random_delay_mean_delta_w": 0.5602965537059298,
+      "real_mean_delta_w": 1.1581878311635259,
+      "real_minus_random": 0.5978912774575961,
+      "real_minus_shuffled": 1.6581878311635259,
+      "real_minus_zero_delay": 0.17780299809290523,
+      "shuffled_mean_delta_w": -0.5,
+      "trials": 64,
+      "zero_delay_mean_delta_w": 0.9803848330706206
+    },
+    "system_metrics": {
+      "completion_curve": {
+        "curve": {
+          "0.2": 0.6465773809523809,
+          "0.4": 0.7697916666666667,
+          "0.6": 0.78125,
+          "0.8": 0.7760416666666666
+        },
+        "mean_completion": 0.7434151785714286
+      },
+      "continuity": {
+        "adjacent_overlap_mean": 0.7460470085470087,
+        "continuity_margin_mean": 0.12437333907922143,
+        "link_consistency": 0.75,
+        "non_adjacent_overlap_mean": 0.6216736694677872
+      },
+      "exact_lookup_text": "Alice works at Google",
+      "false_retrieval_rate": {
+        "false_retrieval_count": 3,
+        "false_retrieval_rate": 0.75,
+        "mean_best_impostor_overlap": 0.8767156862745098,
+        "mean_margin": -0.06090686274509802,
+        "mean_target_overlap": 0.8158088235294118,
+        "num_records": 4
+      },
+      "graph_retrieval_accuracy": {
+        "ca3_overlap_pct": 5.833333333333333,
+        "edge_accuracy": 0.0,
+        "graph_recon_top_overlap": 0.0,
+        "relation_accuracy": 0.0,
+        "relation_confidence": 0.9960450493057906,
+        "relation_prediction": "MANAGES",
+        "source_node_accuracy": 0.6,
+        "source_node_classification": 0.0,
+        "src_neurons_active": 3,
+        "structure_accuracy": 0.26666666666666666,
+        "target_node_accuracy": 0.2,
+        "target_node_classification": 0.0,
+        "temporal_delay_accuracy": 0.6,
+        "tgt_neurons_active": 1
+      },
+      "interference": {
+        "mean_retention": 0.8158088235294118,
+        "newest_retention": 1.0,
+        "oldest_retention": 0.5882352941176471,
+        "retention": [
+          0.5882352941176471,
+          0.8,
+          0.875,
+          1.0
+        ]
+      },
+      "modality_dropout": {
+        "best_score": 0.8343750000000001,
+        "best_subset": "sql+graph",
+        "mean_score": 0.6564711548955247,
+        "subset_scores": {
+          "graph": 0.35530303030303034,
+          "graph+text": 0.6328983516483516,
+          "sql": 0.8104166666666667,
+          "sql+graph": 0.8343750000000001,
+          "sql+graph+text": 0.8158088235294118,
+          "sql+text": 0.8072916666666666,
+          "text": 0.3392045454545455
+        },
+        "worst_score": 0.3392045454545455,
+        "worst_subset": "text"
+      },
+      "num_episodes": 4,
+      "provenance": {
+        "ca3_assembly_size": 10,
+        "dg_assembly_size": 27,
+        "energy": 930000.0,
+        "episode_id": 0,
+        "familiar": false,
+        "graph_edge": [
+          0,
+          "WORKS_AT",
+          1
+        ],
+        "neuromodulator": 2.0,
+        "predecessor_episode_id": null,
+        "sql_row": {
+          "age": 30,
+          "city": "NYC",
+          "dept": "AI",
+          "role": "Engineer",
+          "salary": 85000
+        },
+        "successor_episode_id": 1,
+        "text": "Alice works at Google",
+        "timestamp": 0.0
+      },
+      "separation": {
+        "best_impostor_overlap_mean": 0.8767156862745098,
+        "false_retrieval_rate": 0.75,
+        "max_pairwise_assembly_overlap": 0.8125,
+        "mean_pairwise_assembly_overlap": 0.6838603390073978,
+        "num_records": 4,
+        "separation_margin_mean": -0.06090686274509802,
+        "separation_top1_accuracy": 0.25,
+        "target_overlap_mean": 0.8158088235294118
+      }
+    }
+  },
+  "manifest": {
+    "git_sha": "54315d7",
+    "output_root": "outputs/eval_runs",
+    "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+    "python_version": "3.13.13",
+    "run_id": "20260812T121339_973912Z",
+    "seed": 42,
+    "site_payload_version": "v1",
+    "spec_suite_version": "v1",
+    "timestamp_utc": "2026-08-12T12:13:39.974638+00:00",
+    "use_text": true
+  },
+  "site_payload_keys": [
+    "v2v3",
+    "v4v5",
+    "v6"
+  ],
+  "summary_rows": [
+    {
+      "evaluation": "encoder_reconstructibility",
+      "key_metric": "age_err=0.45, delay_err=0.00ms",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "pattern_completion",
+      "key_metric": "acc=100.00%, overlap=0.533",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "multimodal_binding",
+      "key_metric": "delta=8, overlap_delta=0.000",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "engram_stability",
+      "key_metric": "mean_jaccard=0.831",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "pattern_separation",
+      "key_metric": "gain=0.027",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "polychronous_binding",
+      "key_metric": "mean_abs_error=0.661ms",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "stdp_causality",
+      "key_metric": "real_minus_shuffled=1.6582",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "system_metrics",
+      "key_metric": "aggregate metrics only",
+      "result": "SUMMARY"
+    },
+    {
+      "evaluation": "cera",
+      "key_metric": "",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "binding_index",
+      "key_metric": "",
+      "result": "PASS"
+    },
+    {
+      "evaluation": "polychronous_binding_gain",
+      "key_metric": "",
+      "result": "PASS"
+    }
+  ]
+}

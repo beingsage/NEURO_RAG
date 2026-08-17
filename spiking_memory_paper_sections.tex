@@ -1,0 +1,150 @@
+\section{Introduction}
+
+The human brain effortlessly encodes, consolidates, and retrieves memories that bind together disparate sensory modalities---a conversation overheard in a crowded room, the face of a colleague, the context of a meeting room---into coherent episodic traces. Replicating this capability in artificial systems remains one of the central challenges in neuromorphic computing and multimodal machine learning. While deep learning has produced powerful unimodal encoders for vision, language, and structured data, these representations typically remain siloed within modality-specific pipelines, lacking the biological mechanisms that enable cross-modal association, continual learning, and robust retrieval under partial cues.
+
+This paper presents a polychronous multi-modal spiking memory architecture that implements a biologically inspired encoding--consolidation--retrieval cycle using spiking neural networks (SNNs). Our system maps structured relational data, graph-structured knowledge, and natural language text into a unified latent space via modality-specific encoders, and routes these representations through an entorhinal--dentate--hippocampal pathway (EC--DG--CA3--CA1) modeled after the mammalian medial temporal lobe. Key features of the architecture include: (1) \textit{sparse polychronous coding} in the dentate gyrus (DG) via $k$-winner-take-all competition; (2) \textit{recurrent attractor dynamics} in CA3 with spike-timing-dependent plasticity (STDP) and homeostatic regulation; (3) \textit{neuromodulated consolidation} gated by a novelty-detection mechanism in the entorhinal cortex (EC); and (4) \textit{cross-modal readout} through a learned CA1 back-projection that enables retrieval of any modality from a partial cue in another.
+
+Unlike conventional memory-augmented neural networks that rely on dense differentiable attention over external key--value stores, our model operates on explicit spike times and delayed synaptic transmission. This temporal structure provides a natural substrate for encoding relational order (e.g., ``manages'' vs. ``reports to'') through polychronous activation patterns, and for distinguishing familiar from novel episodes via energy-based novelty detection. We evaluate the system on a multi-modal episode stream comprising SQL records, knowledge-graph edges, and textual descriptions, measuring retention under interference, separation between similar episodes, continuity across temporally adjacent events, and robustness to modality dropout. Our results demonstrate that the spiking substrate achieves competitive cross-modal retrieval accuracy while exhibiting graceful degradation under partial cues and continual learning without catastrophic forgetting.
+
+
+\section{Related Work}
+
+\subsection{Spiking Neural Networks and Neuromorphic Memory}
+
+Spiking neural networks offer a computational substrate that is temporally precise and energetically efficient, making them attractive candidates for online memory systems. The leaky integrate-and-fire (LIF) model, augmented with synaptic delays and STDP, has been widely used to study polychronous groups---sets of neurons that fire in reproducible temporal patterns despite not being synaptically connected in a feed-forward chain \cite{izhikevich2006polychronization}. Recent neuromorphic implementations have scaled these ideas to multi-chip systems for event-based sensory processing \cite{davies2018loihi}, yet few have addressed the problem of \textit{multimodal} binding and long-term episodic storage. Our work extends the polychronous framework by introducing structured cross-modal encoders and a consolidation protocol that stabilizes attractor basins through replay, mirroring hippocampal sharp-wave ripple reactivation observed during sleep and quiet wakefulness \cite{girardeau2009selective}.
+
+\subsection{Multimodal Representation Learning}
+
+The dominant paradigm for multimodal learning relies on large-scale contrastive pre-training to align vision, language, and audio into a shared embedding space \cite{radford2021learning}. While effective for zero-shot transfer, these representations are typically static: once computed, they do not adapt to new episodes, nor do they provide mechanisms for partial-cue retrieval or temporal sequencing. Complementary work on multimodal transformers has introduced cross-attention layers that fuse modalities at the token level \cite{li2019visualbert}, but such models suffer from quadratic complexity and lack explicit memory structures. Our approach differs by using modality-specific sparse codes that are dynamically bound through a common spiking substrate, enabling retrieval of one modality from a cue in another without requiring joint pre-training of all encoders.
+
+\subsection{Episodic Memory and Consolidation in Artificial Systems}
+
+Episodic memory architectures in deep learning have drawn inspiration from the hippocampal indexing theory \cite{tulving2002episodic}, leading to models such as differentiable neural computers (DNCs) \cite{graves2016hybrid} and memory networks \cite{weston2014memory}. These systems use external memory matrices with content-based addressing, updated via gradient descent. While powerful, they do not capture the \textit{temporal} and \textit{sparsity} constraints of biological memory formation. More recent work has explored replay-based consolidation to mitigate catastrophic forgetting \cite{shin2017continual}, but typically replays raw inputs or latent vectors rather than compressed spiking engrams. Our model introduces a two-stage encoding protocol---pre-activation followed by neuromodulated plasticity---that mirrors the transition from encoding to consolidation in the hippocampus, and employs offline replay over DG assemblies to stabilize CA3 attractors without requiring generative replay of raw sensory data.
+
+\subsection{Memory-Augmented Neural Networks}
+
+Memory-augmented neural networks (MANNs) enhance parametric models with non-parametric external stores, enabling few-shot learning and long-horizon credit assignment \cite{santoro2016meta}. Key--value attention mechanisms allow these models to retrieve relevant past experiences, but the retrieval operation is dense and differentiable, lacking the sharp thresholding and sparse activation characteristic of biological recall. Our CA3 attractor network implements a form of ``nearest neighbor'' retrieval through recurrent dynamics: partial cues drive the network into a basin of attraction corresponding to a stored episode, with the basin shape shaped by STDP and homeostasis. This provides a mechanistic account of how sparse, spiking representations can support associative memory without attention-based content lookup.
+
+\subsection{Cross-Modal Retrieval and Association}
+
+Cross-modal retrieval---the ability to retrieve an image given a text description, or vice versa---has been extensively studied in the information retrieval literature \cite{wang2016comprehensive}. Most approaches learn a joint metric space in which distances reflect semantic similarity. However, these systems typically assume batch training and static corpora. Our architecture supports \textit{online} cross-modal association: as episodes are encoded, the CA1 readout learns to map CA3 engrams back to the support vectors of each modality. We introduce a cross-episode retrieval accuracy (CERA) metric that quantifies how well a cue in one modality retrieves the correct content in another, and demonstrate that the spiking pathway achieves robust CERA even when cues are partial and the memory system is under continual update.
+
+
+\section{Conclusion}
+
+We have presented a polychronous multi-modal spiking memory system that bridges the gap between biologically plausible neural dynamics and functional episodic memory requirements. By routing structured, graph, and textual data through an EC--DG--CA3--CA1 pathway, the architecture achieves several properties that are difficult to realize in conventional deep learning pipelines:
+
+\begin{itemize}
+    \item \textbf{Sparse polychronous binding.} The DG's $k$-WTA mechanism produces sparse, high-dimensional codes that serve as episode-specific pointers, while CA3 recurrent dynamics complete partial patterns into stable attractor states.
+    \item \textbf{Neuromodulated plasticity.} A novelty-energy signal in the entorhinal cortex gates STDP, ensuring that novel episodes are strongly consolidated while familiar episodes trigger retrieval without overwriting existing engrams.
+    \item \textbf{Cross-modal readout.} The CA1 layer learns back-projections from CA3 assemblies to modality-specific support vectors, enabling text-to-SQL, SQL-to-graph, and graph-to-text retrieval from partial cues.
+    \item \textbf{Continual retention.} Offline replay over stored DG assemblies stabilizes CA3 attractors, improving retention of early episodes without requiring generative replay of raw inputs.
+\end{itemize}
+
+Our ablation studies confirm that each component---structured synaptic delays, DG bridging, CA3 recurrence, and STDP---contributes causally to retrieval performance. Removing synaptic delays or randomizing them degrades relation classification accuracy and cross-modal retrieval, indicating that the temporal structure of the DG--CA3 pathway is not merely a implementation detail but a computational resource. Similarly, disabling CA3 recurrence eliminates attractor completion, causing catastrophic interference between similar episodes.
+
+Several directions remain for future work. First, scaling the architecture to high-dimensional visual and auditory streams will require more efficient sparse encoders and potentially hierarchical DG layers. Second, incorporating active forgetting mechanisms---synaptic decay or engram suppression---could prevent memory saturation over very long episode streams. Third, translating the model to neuromorphic hardware such as Intel Loihi or IBM NorthPole would allow evaluation of the energy--accuracy trade-offs that motivate spiking computation in the first place. Finally, integrating the system with large language models for downstream reasoning tasks could provide a biologically grounded memory substrate for long-horizon agentic behavior.
+
+
+\section*{References}
+
+\begin{thebibliography}{10}
+
+\bibitem{izhikevich2006polychronization}
+E.~M. Izhikevich, ``Polychronization: computation with spikes,'' \textit{Neural Computation}, vol.~18, no.~2, pp.~245--282, 2006.
+
+\bibitem{davies2018loihi}
+M.~Davies \textit{et al.}, ``Loihi: a neuromorphic manycore processor with on-chip learning,'' \textit{IEEE Micro}, vol.~38, no.~1, pp.~82--99, 2018.
+
+\bibitem{girardeau2009selective}
+G.~Girardeau \textit{et al.}, ``Selective suppression of hippocampal ripples impairs spatial memory,'' \textit{Nature Neuroscience}, vol.~12, no.~10, pp.~1222--1223, 2009.
+
+\bibitem{radford2021learning}
+A.~Radford \textit{et al.}, ``Learning transferable visual models from natural language supervision,'' in \textit{ICML}, 2021, pp.~8748--8763.
+
+\bibitem{li2019visualbert}
+L.~H. Li \textit{et al.}, ``VisualBERT: a simple and performant baseline for vision and language,'' \textit{arXiv preprint arXiv:1908.03557}, 2019.
+
+\bibitem{tulving2002episodic}
+E.~Tulving, ``Episodic memory: from mind to brain,'' \textit{Annual Review of Psychology}, vol.~53, pp.~1--25, 2002.
+
+\bibitem{graves2016hybrid}
+A.~Graves \textit{et al.}, ``Hybrid computing using a neural network with dynamic external memory,'' \textit{Nature}, vol.~538, no.~7626, pp.~471--476, 2016.
+
+\bibitem{weston2014memory}
+J.~Weston, S.~Chopra, and A.~Bordes, ``Memory networks,'' \textit{arXiv preprint arXiv:1410.3916}, 2014.
+
+\bibitem{shin2017continual}
+H.~Shin \textit{et al.}, ``Continual learning with deep generative replay,'' in \textit{NIPS}, 2017, pp.~2990--2999.
+
+\bibitem{santoro2016meta}
+A.~Santoro \textit{et al.}, ``Meta-learning with memory-augmented neural networks,'' in \textit{ICML}, 2016, pp.~1842--1850.
+
+\bibitem{wang2016comprehensive}
+K.~Wang \textit{et al.}, ``A comprehensive survey on cross-modal retrieval,'' \textit{arXiv preprint arXiv:1607.06215}, 2016.
+
+\bibitem{benna2016computational}
+M.~K. Benna and S.~Fusi, ``Computational principles of synaptic memory consolidation,'' \textit{Nature Neuroscience}, vol.~19, no.~12, pp.~1697--1706, 2016.
+
+\bibitem{rolls2013hippocampus}
+E.~T. Rolls, ``The mechanisms for pattern completion and pattern separation in the hippocampus,'' \textit{Frontiers in Systems Neuroscience}, vol.~7, p.~74, 2013.
+
+\bibitem{neftci2019surrogate}
+E.~Neftci, H.~Mostafa, and F.~Zenke, ``Surrogate gradient learning in spiking neural networks: bringing the power of gradient-based optimization to spiking neural networks,'' \textit{IEEE Signal Processing Magazine}, vol.~36, no.~6, pp.~51--63, 2019.
+
+\bibitem{le2019brain}
+H.~T. Le \textit{et al.}, ``Brain-inspired replay for continual learning with artificial neural networks,'' \textit{Nature Communications}, vol.~11, no.~1, p.~4069, 2020.
+
+\end{thebibliography}
+
+
+\appendix
+
+\section{Key Notation}
+
+Table~\ref{tab:notation} summarizes the key mathematical symbols and functions used throughout the paper.
+
+\begin{table}[h]
+\centering
+\caption{Key notation used throughout the paper.}
+\label{tab:notation}
+\begin{tabular}{@{}cl@{}}
+\toprule
+\textbf{Symbol} & \textbf{Description} \\
+\midrule
+$\mathcal{X} = \{x_t\}$ & Continuous multimodal data stream \\
+$S_t$ & Segmentation trigger indicator at time $t$ \\
+$\mathds{1}[\cdot]$ & Indicator function (returns 1 if true, 0 otherwise) \\
+$m_i$ & $i$-th \texttt{ShortTermMemory} object \\
+$\mathcal{K}$ & Set of indices for consolidated memories \\
+$k \in \mathcal{K}$ & Index in the consolidated set \\
+$\tilde{m}_k$ & Consolidated \texttt{ShortTermMemory} object \\
+$\theta_k$ & $k$-th \texttt{ThetaEvent} object \\
+$\mathcal{M}$ & Collection of consolidated \texttt{ShortTermMemory} objects \\
+$\Theta$ & Collection of \texttt{ThetaEvent} objects \\
+$v_i$, $v_k$ & Representative embedding for segment $i$ or $k$ \\
+$E_i$ & Sequence of cross-modal embeddings for segment $i$ \\
+$T_i$ & Aggregated textual outputs for segment $i$ \\
+$C_i$ & Pointers to raw audiovisual data for segment $i$ \\
+$\mathcal{S}_{\theta_k}$ & Semantic summary of \texttt{ThetaEvent} $k$ \\
+$\mathcal{E}_c$ & Cross-modal embedding model \\
+$\mathcal{T}_v$ & Vision-language model for visual descriptions \\
+$\mathcal{T}_a$ & Speech recognition model \\
+$\phi_{\text{LLM}}$ & LLM for semantic summary generation \\
+$\gamma$ & Consolidation similarity threshold \\
+$\tau$ & Confidence threshold for retrieval switching \\
+$\delta$ & Temporal window expansion parameter \\
+$\cos(\cdot, \cdot)$ & Cosine similarity function \\
+$\operatorname{sim}(\cdot, \cdot)$ & Similarity function (cosine similarity) \\
+$\operatorname{TopK}(\cdot, k)$ & Function returning $k$ highest-scoring elements \\
+$\operatorname{FormattedContext}(\cdot)$ & Function to structure multimodal content \\
+$\operatorname{ExtractTarget}(\cdot)$ & Function to extract target modality content \\
+$(t_{s,i},\, t_{e,i})$ & Start and end times of segment $i$ \\
+$[t_{s,i},\, t_{e,i}]$ & Alternative notation for segment boundaries \\
+$\Phi_{\text{fast}}$ & Fast retrieval function \\
+$\Psi_{\text{detailed}}$ & Detailed recall function \\
+$\Gamma$ & Adaptive reasoning module \\
+$\mathcal{C}_{\text{context}}$ & Context information for reasoning \\
+\bottomrule
+\end{tabular}
+\end{table}

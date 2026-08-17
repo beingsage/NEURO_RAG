@@ -1,0 +1,104 @@
+{
+  "completion_curve": {
+    "curve": {
+      "0.2": 0.6465773809523809,
+      "0.4": 0.7697916666666667,
+      "0.6": 0.78125,
+      "0.8": 0.7760416666666666
+    },
+    "mean_completion": 0.7434151785714286
+  },
+  "continuity": {
+    "adjacent_overlap_mean": 0.7460470085470087,
+    "continuity_margin_mean": 0.12437333907922143,
+    "link_consistency": 0.75,
+    "non_adjacent_overlap_mean": 0.6216736694677872
+  },
+  "exact_lookup_text": "Alice works at Google",
+  "false_retrieval_rate": {
+    "false_retrieval_count": 3,
+    "false_retrieval_rate": 0.75,
+    "mean_best_impostor_overlap": 0.8767156862745098,
+    "mean_margin": -0.06090686274509802,
+    "mean_target_overlap": 0.8158088235294118,
+    "num_records": 4
+  },
+  "graph_retrieval_accuracy": {
+    "ca3_overlap_pct": 5.833333333333333,
+    "edge_accuracy": 0.0,
+    "graph_recon_top_overlap": 0.0,
+    "relation_accuracy": 0.0,
+    "relation_confidence": 0.9960450493057906,
+    "relation_prediction": "MANAGES",
+    "source_node_accuracy": 0.6,
+    "source_node_classification": 0.0,
+    "src_neurons_active": 3,
+    "structure_accuracy": 0.26666666666666666,
+    "target_node_accuracy": 0.2,
+    "target_node_classification": 0.0,
+    "temporal_delay_accuracy": 0.6,
+    "tgt_neurons_active": 1
+  },
+  "interference": {
+    "mean_retention": 0.8158088235294118,
+    "newest_retention": 1.0,
+    "oldest_retention": 0.5882352941176471,
+    "retention": [
+      0.5882352941176471,
+      0.8,
+      0.875,
+      1.0
+    ]
+  },
+  "modality_dropout": {
+    "best_score": 0.8343750000000001,
+    "best_subset": "sql+graph",
+    "mean_score": 0.6564711548955247,
+    "subset_scores": {
+      "graph": 0.35530303030303034,
+      "graph+text": 0.6328983516483516,
+      "sql": 0.8104166666666667,
+      "sql+graph": 0.8343750000000001,
+      "sql+graph+text": 0.8158088235294118,
+      "sql+text": 0.8072916666666666,
+      "text": 0.3392045454545455
+    },
+    "worst_score": 0.3392045454545455,
+    "worst_subset": "text"
+  },
+  "num_episodes": 4,
+  "provenance": {
+    "ca3_assembly_size": 10,
+    "dg_assembly_size": 27,
+    "energy": 930000.0,
+    "episode_id": 0,
+    "familiar": false,
+    "graph_edge": [
+      0,
+      "WORKS_AT",
+      1
+    ],
+    "neuromodulator": 2.0,
+    "predecessor_episode_id": null,
+    "sql_row": {
+      "age": 30,
+      "city": "NYC",
+      "dept": "AI",
+      "role": "Engineer",
+      "salary": 85000
+    },
+    "successor_episode_id": 1,
+    "text": "Alice works at Google",
+    "timestamp": 0.0
+  },
+  "separation": {
+    "best_impostor_overlap_mean": 0.8767156862745098,
+    "false_retrieval_rate": 0.75,
+    "max_pairwise_assembly_overlap": 0.8125,
+    "mean_pairwise_assembly_overlap": 0.6838603390073978,
+    "num_records": 4,
+    "separation_margin_mean": -0.06090686274509802,
+    "separation_top1_accuracy": 0.25,
+    "target_overlap_mean": 0.8158088235294118
+  }
+}

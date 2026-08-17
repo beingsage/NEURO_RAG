@@ -1,0 +1,9 @@
+{
+  "coefficient_of_variation": 0.13884463226978314,
+  "engram_size_variance": 3.81,
+  "mean_jaccard": 0.8310679516561871,
+  "mean_size": 12.3,
+  "passed": true,
+  "repeats": 10,
+  "std_jaccard": 0.11538932413890521
+}

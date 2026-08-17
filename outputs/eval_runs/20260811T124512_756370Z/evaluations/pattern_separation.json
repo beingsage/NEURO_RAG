@@ -1,0 +1,6 @@
+{
+  "dg_jaccard_mean": 0.8181818181818181,
+  "input_jaccard_mean": 0.8362068965517242,
+  "passed": true,
+  "separation_gain_mean": 0.026806526806526842
+}

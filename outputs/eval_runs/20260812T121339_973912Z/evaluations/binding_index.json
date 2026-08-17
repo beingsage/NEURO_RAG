@@ -1,0 +1,10 @@
+{
+  "binding_index": {
+    "graph->sql": 0.7904761904761904,
+    "graph->text": 0.0,
+    "sql->graph": 0.0,
+    "sql->text": 0.0,
+    "text->graph": 0.0,
+    "text->sql": 0.6702127659574468
+  }
+}

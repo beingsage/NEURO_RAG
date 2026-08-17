@@ -1,0 +1,266 @@
+{
+  "config": {
+    "assembly_k": 24,
+    "bucket_bits": 11,
+    "ca1_n": 320,
+    "ca1_relation_lr": 0.05,
+    "ca1_train_epochs": 12,
+    "ca1_train_lr": 0.03,
+    "ca3_exc": 240,
+    "ca3_inh": 60,
+    "ca3_size": 240,
+    "dg_output_dim": 1200,
+    "dg_target_sparsity": 0.02,
+    "use_text": true
+  },
+  "cue_fraction": 0.4,
+  "exact_max_n": 0,
+  "results": {
+    "100": {
+      "false_retrieval_rate": {
+        "mean": 0.0,
+        "per_seed": [
+          0.0
+        ],
+        "std": 0.0
+      },
+      "mean_best_impostor_overlap": {
+        "mean": 0.018000000000000002,
+        "per_seed": [
+          0.018000000000000002
+        ],
+        "std": 0.0
+      },
+      "mean_margin": {
+        "mean": 0.982,
+        "per_seed": [
+          0.982
+        ],
+        "std": 0.0
+      },
+      "mean_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0
+        ],
+        "std": 0.0
+      },
+      "memory_footprint_mb": {
+        "mean": 0.0113,
+        "per_seed": [
+          0.0113
+        ],
+        "std": 0.0
+      },
+      "mode": "proxy",
+      "newest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0
+        ],
+        "std": 0.0
+      },
+      "oldest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0
+        ],
+        "std": 0.0
+      },
+      "retention_by_quartile": {
+        "mean": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "seed_metrics": [
+        {
+          "anchor_count": 100,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.018000000000000002,
+          "mean_margin": 0.982,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 0.0113,
+          "mode": "proxy",
+          "n": 100,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 0,
+          "std_retention": 0.0
+        }
+      ],
+      "vs_100": {
+        "false_retrieval_rate": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        },
+        "mean_margin": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        },
+        "mean_retention": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        }
+      }
+    },
+    "100000": {
+      "false_retrieval_rate": {
+        "mean": 0.0,
+        "per_seed": [
+          0.0
+        ],
+        "std": 0.0
+      },
+      "mean_best_impostor_overlap": {
+        "mean": 0.7156391328480972,
+        "per_seed": [
+          0.7156391328480972
+        ],
+        "std": 0.0
+      },
+      "mean_margin": {
+        "mean": 0.2843608671519028,
+        "per_seed": [
+          0.2843608671519028
+        ],
+        "std": 0.0
+      },
+      "mean_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0
+        ],
+        "std": 0.0
+      },
+      "memory_footprint_mb": {
+        "mean": 11.3,
+        "per_seed": [
+          11.3
+        ],
+        "std": 0.0
+      },
+      "mode": "proxy",
+      "newest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0
+        ],
+        "std": 0.0
+      },
+      "oldest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0
+        ],
+        "std": 0.0
+      },
+      "retention_by_quartile": {
+        "mean": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "seed_metrics": [
+        {
+          "anchor_count": 512,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.7156391328480972,
+          "mean_margin": 0.2843608671519028,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 11.3,
+          "mode": "proxy",
+          "n": 100000,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 0,
+          "std_retention": 0.0
+        }
+      ],
+      "vs_100": {
+        "false_retrieval_rate": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        },
+        "mean_margin": {
+          "bootstrap_ci95": [
+            -0.6976391328480972,
+            -0.6976391328480972
+          ],
+          "mean_delta": -0.6976391328480972,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        },
+        "mean_retention": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        }
+      }
+    }
+  },
+  "run_dir": "/media/sagesujal/DEV1/bytes/research/outputs/capacity_runs_test/20260813T155941_918134Z",
+  "run_id": "20260813T155941_918134Z",
+  "seeds": [
+    0
+  ],
+  "sizes": [
+    100,
+    100000
+  ],
+  "timestamp_utc": "2026-08-13T15:59:41.918163+00:00"
+}

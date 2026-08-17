@@ -1,0 +1,494 @@
+{
+  "config": {
+    "assembly_k": 24,
+    "bucket_bits": 11,
+    "ca1_n": 320,
+    "ca1_relation_lr": 0.05,
+    "ca1_train_epochs": 12,
+    "ca1_train_lr": 0.03,
+    "ca3_exc": 240,
+    "ca3_inh": 60,
+    "ca3_size": 240,
+    "dg_output_dim": 1200,
+    "dg_target_sparsity": 0.02,
+    "use_text": true
+  },
+  "cue_fraction": 0.4,
+  "exact_max_n": 0,
+  "results": {
+    "100": {
+      "false_retrieval_rate": {
+        "mean": 0.0,
+        "per_seed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "std": 0.0
+      },
+      "mean_best_impostor_overlap": {
+        "mean": 0.022097150312775975,
+        "per_seed": [
+          0.018000000000000002,
+          0.017272727272727273,
+          0.0418684375328275,
+          0.00821917808219178,
+          0.025125408676133314
+        ],
+        "std": 0.01257710179891134
+      },
+      "mean_margin": {
+        "mean": 0.9779028496872242,
+        "per_seed": [
+          0.982,
+          0.9827272727272728,
+          0.9581315624671726,
+          0.9917808219178081,
+          0.9748745913238668
+        ],
+        "std": 0.01257710179891129
+      },
+      "mean_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": 0.0
+      },
+      "memory_footprint_mb": {
+        "mean": 0.0113,
+        "per_seed": [
+          0.0113,
+          0.0113,
+          0.0113,
+          0.0113,
+          0.0113
+        ],
+        "std": 0.0
+      },
+      "mode": "proxy",
+      "newest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": 0.0
+      },
+      "oldest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": 0.0
+      },
+      "retention_by_quartile": {
+        "mean": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "seed_metrics": [
+        {
+          "anchor_count": 100,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.018000000000000002,
+          "mean_margin": 0.982,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 0.0113,
+          "mode": "proxy",
+          "n": 100,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 0,
+          "std_retention": 0.0
+        },
+        {
+          "anchor_count": 100,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.017272727272727273,
+          "mean_margin": 0.9827272727272728,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 0.0113,
+          "mode": "proxy",
+          "n": 100,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 1,
+          "std_retention": 0.0
+        },
+        {
+          "anchor_count": 100,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.0418684375328275,
+          "mean_margin": 0.9581315624671726,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 0.0113,
+          "mode": "proxy",
+          "n": 100,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 2,
+          "std_retention": 0.0
+        },
+        {
+          "anchor_count": 100,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.00821917808219178,
+          "mean_margin": 0.9917808219178081,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 0.0113,
+          "mode": "proxy",
+          "n": 100,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 3,
+          "std_retention": 0.0
+        },
+        {
+          "anchor_count": 100,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.025125408676133314,
+          "mean_margin": 0.9748745913238668,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 0.0113,
+          "mode": "proxy",
+          "n": 100,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 4,
+          "std_retention": 0.0
+        }
+      ],
+      "vs_100": {
+        "false_retrieval_rate": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        },
+        "mean_margin": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        },
+        "mean_retention": {
+          "bootstrap_ci95": [
+            0.0,
+            0.0
+          ],
+          "mean_delta": 0.0,
+          "paired_t_p": 1.0,
+          "paired_t_stat": 0.0
+        }
+      }
+    },
+    "100000": {
+      "false_retrieval_rate": {
+        "mean": 0.001953125,
+        "per_seed": [
+          0.0,
+          0.001953125,
+          0.00390625,
+          0.001953125,
+          0.001953125
+        ],
+        "std": 0.0013810679320049757
+      },
+      "mean_best_impostor_overlap": {
+        "mean": 0.7155303855541877,
+        "per_seed": [
+          0.7156391328480972,
+          0.7190552422815675,
+          0.7150831826316189,
+          0.7119338367962251,
+          0.7159405332134297
+        ],
+        "std": 0.0025367210847482323
+      },
+      "mean_margin": {
+        "mean": 0.28261085134066277,
+        "per_seed": [
+          0.2843608671519028,
+          0.27912184105176574,
+          0.281180404324903,
+          0.2862432465371082,
+          0.28214789763763415
+        ],
+        "std": 0.002769952517409964
+      },
+      "mean_retention": {
+        "mean": 0.9981412368948505,
+        "per_seed": [
+          1.0,
+          0.9981770833333333,
+          0.9962635869565217,
+          0.9981770833333333,
+          0.9980884308510638
+        ],
+        "std": 0.0013215453061222737
+      },
+      "memory_footprint_mb": {
+        "mean": 11.3,
+        "per_seed": [
+          11.3,
+          11.3,
+          11.3,
+          11.3,
+          11.3
+        ],
+        "std": 0.0
+      },
+      "mode": "proxy",
+      "newest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": 0.0
+      },
+      "oldest_retention": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "std": 0.0
+      },
+      "retention_by_quartile": {
+        "mean": [
+          0.9985416666666665,
+          0.9969761794634598,
+          0.9970471014492753,
+          1.0
+        ],
+        "std": [
+          0.0032609324671872067,
+          0.004140990893449249,
+          0.004043930119615007,
+          0.0
+        ]
+      },
+      "seed_metrics": [
+        {
+          "anchor_count": 512,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.0,
+          "mean_best_impostor_overlap": 0.7156391328480972,
+          "mean_margin": 0.2843608671519028,
+          "mean_retention": 1.0,
+          "memory_footprint_mb": 11.3,
+          "mode": "proxy",
+          "n": 100000,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 0,
+          "std_retention": 0.0
+        },
+        {
+          "anchor_count": 512,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.001953125,
+          "mean_best_impostor_overlap": 0.7190552422815675,
+          "mean_margin": 0.27912184105176574,
+          "mean_retention": 0.9981770833333333,
+          "memory_footprint_mb": 11.3,
+          "mode": "proxy",
+          "n": 100000,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            1.0,
+            0.9927083333333333,
+            1.0
+          ],
+          "seed": 1,
+          "std_retention": 0.04124789556921527
+        },
+        {
+          "anchor_count": 512,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.00390625,
+          "mean_best_impostor_overlap": 0.7150831826316189,
+          "mean_margin": 0.281180404324903,
+          "mean_retention": 0.9962635869565217,
+          "memory_footprint_mb": 11.3,
+          "mode": "proxy",
+          "n": 100000,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            0.9925271739130435,
+            0.9925271739130435,
+            1.0
+          ],
+          "seed": 2,
+          "std_retention": 0.059724084346140835
+        },
+        {
+          "anchor_count": 512,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.001953125,
+          "mean_best_impostor_overlap": 0.7119338367962251,
+          "mean_margin": 0.2862432465371082,
+          "mean_retention": 0.9981770833333333,
+          "memory_footprint_mb": 11.3,
+          "mode": "proxy",
+          "n": 100000,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            0.9927083333333333,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "seed": 3,
+          "std_retention": 0.041247895569215265
+        },
+        {
+          "anchor_count": 512,
+          "cue_fraction": 0.4,
+          "false_retrieval_rate": 0.001953125,
+          "mean_best_impostor_overlap": 0.7159405332134297,
+          "mean_margin": 0.28214789763763415,
+          "mean_retention": 0.9980884308510638,
+          "memory_footprint_mb": 11.3,
+          "mode": "proxy",
+          "n": 100000,
+          "newest_retention": 1.0,
+          "oldest_retention": 1.0,
+          "retention_by_quartile": [
+            1.0,
+            0.9923537234042553,
+            1.0,
+            1.0
+          ],
+          "seed": 4,
+          "std_retention": 0.04325387225343243
+        }
+      ],
+      "vs_100": {
+        "false_retrieval_rate": {
+          "bootstrap_ci95": [
+            0.00078125,
+            0.003125
+          ],
+          "mean_delta": 0.001953125,
+          "paired_t_p": 0.03410942316740963,
+          "paired_t_stat": 3.162277660168379
+        },
+        "mean_margin": {
+          "bootstrap_ci95": [
+            -0.7031850293921023,
+            -0.6858235486987482
+          ],
+          "mean_delta": -0.6952919983465613,
+          "paired_t_p": 1.752025022969895e-08,
+          "paired_t_stat": -136.02339803555435
+        },
+        "mean_retention": {
+          "bootstrap_ci95": [
+            -0.002971014492753632,
+            -0.0007468971631205745
+          ],
+          "mean_delta": -0.0018587631051495634,
+          "paired_t_p": 0.03467887463192578,
+          "paired_t_stat": -3.1450459079444206
+        }
+      }
+    }
+  },
+  "run_dir": "/media/sagesujal/DEV1/bytes/research/outputs/capacity_runs/20260813T153953_154497Z",
+  "run_id": "20260813T153953_154497Z",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "sizes": [
+    100,
+    100000
+  ],
+  "timestamp_utc": "2026-08-13T15:39:53.154528+00:00"
+}

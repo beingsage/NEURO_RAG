@@ -1,0 +1,39 @@
+{
+  "activation_delta": 8,
+  "control_ca3_active": 6,
+  "control_overlap": 0.6,
+  "control_sql_cue": {
+    "age": 58,
+    "city": "Austin",
+    "dept": "Ops",
+    "role": "Analyst",
+    "salary": 12500
+  },
+  "graph_metrics": {
+    "ca3_overlap_pct": 5.833333333333333,
+    "edge_accuracy": 0.0,
+    "graph_recon_top_overlap": 0.0,
+    "relation_accuracy": 0.0,
+    "relation_confidence": 0.9960450493057906,
+    "relation_prediction": "MANAGES",
+    "source_node_accuracy": 0.6,
+    "source_node_classification": 0.0,
+    "src_neurons_active": 3,
+    "structure_accuracy": 0.26666666666666666,
+    "target_node_accuracy": 0.2,
+    "target_node_classification": 0.0,
+    "temporal_delay_accuracy": 0.6,
+    "tgt_neurons_active": 1
+  },
+  "learned_ca3_active": 14,
+  "overlap_delta": 0.0,
+  "partial_sql_cue": {
+    "age": 30,
+    "salary": 85000
+  },
+  "passed": true,
+  "relation_confidence": 0.9960450493057906,
+  "relation_prediction": "MANAGES",
+  "target_episode_id": 0,
+  "target_overlap": 0.6
+}

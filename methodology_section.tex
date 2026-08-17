@@ -1,0 +1,441 @@
+\section{Methodology}
+\label{sec:methodology}
+
+We describe a polychronous multi-modal spiking memory architecture that implements a biologically inspired encoding--consolidation--retrieval cycle. The system maps structured relational data, graph-structured knowledge, and natural language into a unified spiking substrate via modality-specific encoders, and routes these representations through an entorhinal--dentate--hippocampal (EC--DG--CA3--CA1) pathway. All continuous-time dynamics are simulated with an Euler timestep $\Delta t = 0.1$\,ms.
+
+\subsection{Problem Formulation}
+\label{sec:problem}
+
+An episode $\xi$ is a tuple $(q, g, z)$ comprising:
+\begin{itemize}
+    \item a structured record $q \in \mathcal{Q}$ (e.g., an SQL row with fields $\{\text{age},\text{salary},\text{city},\text{role},\text{dept}\}$);
+    \item a graph edge $g = (u, r, v) \in \mathcal{G}$ with source node $u$, relation $r$, and target node $v$;
+    \item an optional natural-language utterance $z \in \mathcal{Z}$.
+\end{itemize}
+The system processes a stream $\mathcal{X} = \{\xi_1, \xi_2, \dots\}$ and must:
+\begin{enumerate}
+    \item \textbf{Encode} each episode into a sparse, high-dimensional spiking engram $E_n \subset \{0,\dots,N_{\text{CA3}}-1\}$.
+    \item \textbf{Consolidate} engrams via neuromodulated STDP and offline replay.
+    \item \textbf{Retrieve} the full episode from a partial cue in any modality, returning reconstructions $\hat{q}, \hat{g}, \hat{z}$ and a relation prediction $\hat{r}$.
+\end{enumerate}
+
+\subsection{Neural Primitives}
+\label{sec:primitives}
+
+\subsubsection{Leaky Integrate-and-Fire (LIF) Neuron}
+
+Each neuron follows the continuous dynamics
+\begin{equation}
+\tau_m \frac{dv}{dt} = -(v - v_{\mathrm{rest}}) + I_{\mathrm{syn}}(t),
+\label{eq:lif}
+\end{equation}
+with discrete-time Euler update
+\begin{equation}
+v_{t+\Delta t} = v_t + \frac{-(v_t - v_{\mathrm{rest}}) + I_{\mathrm{syn}}(t)}{\tau_m}\,\Delta t.
+\end{equation}
+A spike is emitted when $v_t \geq v_{\mathrm{th}} + b_i$, where $b_i$ is a homeostatic offset. After spiking, the membrane resets to $v_{\mathrm{reset}}$ and enters an absolute refractory period $\tau_{\mathrm{ref}}$. Table~\ref{tab:lif} lists the default parameters.
+
+\begin{table}[h]
+\centering
+\caption{LIF neuron parameters.}
+\label{tab:lif}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Excitatory (RS)} & \textbf{Inhibitory (FS)} \\
+\midrule
+$\tau_m$ & 20\,ms & 15\,ms \\
+$v_{\mathrm{rest}}$ & $-70$\,mV & $-70$\,mV \\
+$v_{\mathrm{th}}$ & $-55$\,mV & $-50$\,mV \\
+$v_{\mathrm{reset}}$ & $-75$\,mV & $-75$\,mV \\
+$\tau_{\mathrm{ref}}$ & 2\,ms & 1\,ms \\
+$\Delta t$ & 0.1\,ms & 0.1\,ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Delayed Synapse with Exponential PSC}
+
+Each synapse carries a weight $w$, delay $d$, and synaptic time constant $\tau_{\mathrm{syn}} = 3$\,ms. The postsynaptic current is computed from an exponential trace $s(t)$:
+\begin{equation}
+s(t+\Delta t) = s(t)\,\exp\!\left(-\frac{\Delta t}{\tau_{\mathrm{syn}}}\right) + \sum_k w_k\,\mathbf{1}[t_k + d_k \leq t],
+\end{equation}
+\begin{equation}
+I_{\mathrm{syn}}(t) = g \cdot s(t),
+\end{equation}
+where $g$ is a gain factor and $\mathbf{1}[\cdot]$ is the indicator function. Weight bounds are $w \in [w_{\min}, w_{\max}]$ with defaults $w_{\min}=0$, $w_{\max}=10$.
+
+\subsubsection{Spike-Timing-Dependent Plasticity (STDP)}
+
+When the post-synaptic neuron fires at $t_{\mathrm{post}}$, the delay-adjusted time difference is $\Delta t = t_{\mathrm{post}} - (t_{\mathrm{pre}} + d)$. The weight update is
+\begin{equation}
+\Delta w =
+\begin{cases}
+M A_+ \exp\!\left(-\dfrac{\Delta t}{\tau_+}\right), & \Delta t \geq 0, \\[8pt]
+-M A_- \exp\!\left(\dfrac{\Delta t}{\tau_-}\right), & \Delta t < 0,
+\end{cases}
+\label{eq:stdp}
+\end{equation}
+with $A_+ = 0.5$, $A_- = 0.48$, $\tau_+ = \tau_- = 12$\,ms. The neuromodulatory gain $M \in \{0,1,2\}$ gates plasticity: $M=0$ disables learning, $M=1$ enables normal plasticity, and $M=2$ boosts it for novel episodes.
+
+
+\subsection{Modality-Specific Encoders}
+\label{sec:encoders}
+
+\subsubsection{SQL Encoder: Structured Population Rate Coding}
+
+The SQL encoder uses $5 \times 20 = 100$ neurons, one population per field. For a numeric field $x$, neuron $i$ with center $c_i$ and width $\sigma$ fires at rate
+\begin{equation}
+r_i(x) = r_{\mathrm{base}} \exp\!\left(-\frac{(x - c_i)^2}{2\sigma^2}\right).
+\end{equation}
+Over an encoding window $T = 10$\,ms, the expected spike count is $\lambda_i = r_i(x) \cdot T/1000$, which is rounded and clipped to $[0, N_{\max}]$ with $N_{\max}=5$. Spike times are sampled uniformly in $[0, T]$.
+
+\textbf{Age.} Centers span $[20, 80]$ with $\sigma=8$ and $r_{\mathrm{base}}=240$\,Hz.
+
+\textbf{Salary (two-band encoding).} To handle both common enterprise salaries and extreme outliers, salary uses two bands:
+\begin{itemize}
+    \item \textit{Low band} (10 neurons): linear centers in $[0, 10^5]$, $\sigma=15000$, $r_{\mathrm{base}}=280$\,Hz.
+    \item \textit{High band} (10 neurons): log-transformed centers in $[\log(1+10^5), \log(1+10^{10})]$, $\sigma=0.9$, $r_{\mathrm{base}}=220$\,Hz.
+\end{itemize}
+The transform is $x_{\mathrm{high}} = \log(1+x)$ and the inverse is $\hat{x} = \exp(\hat{x}_{\mathrm{high}}) - 1$.
+
+\textbf{Categorical fields.} Categories are mapped via deterministic sparse codebooks. Each label is hashed to a $k$-subset of $\{1,\dots,20\}$ with $k=3$. Collision-aware retries fall back to a reserved OOV code.
+
+\textbf{Decoding.} Numeric values are reconstructed by weighted averaging:
+\begin{equation}
+\hat{x} = \frac{\sum_i n_i c_i}{\sum_i n_i + \epsilon},
+\end{equation}
+where $n_i$ is the observed spike count. For salary, the low- and high-band estimates are compared, and the high-band estimate is selected when its total support exceeds the low-band by $>10\%$.
+
+\subsubsection{Graph Encoder: Delay-Coded Edges}
+
+The graph encoder uses 80 neurons: 4 nodes $\times$ 20 neurons per node, with $K_{\mathrm{active}}=5$ active neurons per node. A relation $r$ is encoded not only by which neurons fire, but \textit{when}:
+\begin{align}
+t_{\mathrm{src}} &= t_0, \\
+t_{\mathrm{rel}} &= t_0 + \frac{d_r}{2}, \\
+t_{\mathrm{tgt}} &= t_0 + d_r,
+\end{align}
+where $t_0 = 1$\,ms and $d_r$ is a relation-specific delay (Table~\ref{tab:delays}). A relation-specific burst of 3 neurons fires at the intermediate time $t_{\mathrm{rel}}$, creating an explicit temporal signature.
+
+\begin{table}[h]
+\centering
+\caption{Relation-specific delays.}
+\label{tab:delays}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Relation} & \textbf{Delay $d_r$ (ms)} \\
+\midrule
+WORKS\_AT & 3 \\
+FRIENDS\_WITH & 7 \\
+MANAGES & 5 \\
+REPORTS\_TO & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Text Encoder: Semantic Phase-of-Firing}
+
+The text encoder uses 100 neurons with 5\% sparsity ($k=5$ active neurons per word). Each word is mapped to a 48-dimensional semantic vector. When a pretrained model (\texttt{all-MiniLM-L6-v2}) is available, its embedding is projected into this space; otherwise, deterministic character $n$-gram hashing is used.
+
+Word position $p$ determines the spike phase within a gamma cycle $G = 25$\,ms:
+\begin{equation}
+\phi_p = (p \bmod 4) \cdot \frac{G}{4}, \qquad t = \phi_p + 1\text{\,ms}.
+\end{equation}
+This creates a phase-coded temporal signature for sentences.
+
+
+\subsection{Entorhinal Cortex: Multimodal Convergence and Novelty Detection}
+\label{sec:ec}
+
+The EC converts modality-specific spike trains into rate vectors. For neuron $i$ with $N_i$ spikes in duration $T$:
+\begin{equation}
+x_i = \frac{N_i}{T/1000}\quad\text{(Hz)}.
+\end{equation}
+Without text, the EC vector is $x = [x_{\mathrm{SQL}}; x_{\mathrm{Graph}}] \in \mathbb{R}^{180}$; with text, $x \in \mathbb{R}^{280}$.
+
+\subsubsection{Energy and Support Novelty}
+
+The multimodal energy is the squared norm:
+\begin{equation}
+E = \|x\|_2^2 = \sum_i x_i^2.
+\end{equation}
+Binary support $s_i = \mathbf{1}[x_i > 0]$ is hashed to a signature. The support novelty is
+\begin{equation}
+N_{\mathrm{support}} =
+\begin{cases}
+0, & \text{if the signature was previously seen}, \\
+1, & \text{otherwise}.
+\end{cases}
+\end{equation}
+
+\subsubsection{Novelty Score and Neuromodulation}
+
+Running statistics $(\mu_E, \sigma_E)$ over a window of 10 episodes yield the energy z-score $z_E = (E - \mu_E) / \sigma_E$. The novelty score is
+\begin{equation}
+S_{\mathrm{novel}} = 0.45\,N_{\mathrm{support}} + 0.35\,\sigma(z_E) + 0.10\,\operatorname{clip}(|z_E|, 0, 1) + 0.10\,\operatorname{clip}(s, 0, 1),
+\label{eq:novelty}
+\end{equation}
+where $\sigma(\cdot)$ is the logistic sigmoid and $s$ is an optional salience term. The neuromodulatory state is
+\begin{equation}
+M =
+\begin{cases}
+2, & S_{\mathrm{novel}} \geq 0.5, \\
+1, & S_{\mathrm{novel}} < 0.5.
+\end{cases}
+\end{equation}
+
+
+\subsection{Dentate Gyrus: Sparse Pattern Separation}
+\label{sec:dg}
+
+The DG projects the EC vector $x \in \mathbb{R}^D$ into a higher-dimensional space via a random dictionary $W \in \mathbb{R}^{K \times D}$ with normalized rows. The default configuration uses $K=1200$ and target sparsity $s_{\mathrm{target}} = 0.02$.
+
+\subsubsection{k-Winner-Take-All}
+
+The projection is $h = Wx$. The active DG assembly is the top-$k$ indices:
+\begin{equation}
+\mathcal{A}_{\mathrm{DG}} = \operatorname{TopK}(h, k), \qquad k = \operatorname{round}(K \cdot s_{\mathrm{target}}) \approx 24.
+\end{equation}
+
+\subsubsection{Online Dictionary Refinement}
+
+The dictionary adapts online to make sparse codes episode-specific. The input is normalized as $\hat{x} = x / \|x\|_2$. The matrix decays as $W \leftarrow \gamma W$ with $\gamma = 0.995$, then active rows are updated:
+\begin{equation}
+W_j \leftarrow (1 - \eta)W_j + \eta\hat{x}, \qquad j \in \mathcal{A}_{\mathrm{DG}},
+\end{equation}
+with $\eta = 0.02$. Rows are renormalized after each update.
+
+\subsubsection{DG Spike Conversion}
+
+Each active DG neuron $j$ emits a synchronous burst with deterministic jitter:
+\begin{equation}
+t_j = t_{\mathrm{offset}} + 0.5 + \delta_j,
+\end{equation}
+where $\delta_j$ is a small index-dependent jitter. These spikes are namespaced as \texttt{dg:$j$} for routing to CA3.
+
+
+\subsection{CA3 Recurrent Attractor Network}
+\label{sec:ca3}
+
+The CA3 network contains $N_E = 240$ excitatory (RS) and $N_I = 60$ inhibitory (FS) neurons, for $N = 300$ total. Recurrent connectivity is random and sign-constrained:
+
+\begin{table}[h]
+\centering
+\caption{CA3 recurrent connectivity.}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Projection} & \textbf{Probability} & \textbf{Weight range} & \textbf{Delay (ms)} \\
+\midrule
+E$\rightarrow$E & 15\% & 0.2--0.4 & 1--3 \\
+E$\rightarrow$I & 20\% & 0.3--0.5 & 0.5--2 \\
+I$\rightarrow$E & 30\% & $-1.2$ to $-0.8$ & 0.5--1.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The total synaptic current to neuron $i$ is
+\begin{equation}
+I_i(t) = \sum_{s \in \mathcal{S}_i} I_s(t) + b_i,
+\end{equation}
+where $b_i$ is a learned assembly bias initialized to zero.
+
+\subsubsection{Homeostatic Threshold Adaptation}
+
+After each episode, the firing rate $r_i = N_i^{\mathrm{spike}} / (T/1000)$ is compared against a target $r^* = 6$\,Hz. The homeostatic offset updates as
+\begin{equation}
+\Delta b_i = \eta_h (r_i - r^*), \qquad \eta_h = 0.02,
+\end{equation}
+and is clipped to $[-6, 12]$. The assembly bias also decays slightly: $b_i \leftarrow b_i \cdot 0.995$ if $r_i > r^*$, otherwise $b_i \leftarrow b_i \cdot 0.999$.
+
+\subsubsection{Assembly Reinforcement}
+
+For an active excitatory assembly $\mathcal{A}$, intrinsic excitability is nudged upward:
+\begin{equation}
+b_i \leftarrow \operatorname{clip}\bigl(b_i + \eta_A \cdot 0.5 \cdot M,\, -2,\, 4\bigr), \qquad i \in \mathcal{A},
+\end{equation}
+with $\eta_A = 0.03$. Co-active recurrent E$\rightarrow$E synapses are strengthened:
+\begin{equation}
+w_{ij} \leftarrow \operatorname{clip}\bigl(w_{ij} + \eta_A M,\, w_{\min},\, w_{\max}\bigr), \qquad i,j \in \mathcal{A}.
+\end{equation}
+Active input synapses receive half this increment.
+
+
+\subsection{DG$\rightarrow$CA3 Bridge and Recall Pathway}
+\label{sec:bridge}
+
+The recall pathway is intentionally DG-only: raw modality spikes are not routed directly to CA3. The bridge connects each DG neuron to a sparse set of CA3 excitatory targets via anchor connections (guaranteeing every DG neuron reaches at least a few CA3 cells) plus random fan-out with probability $p=0.008$. Synaptic weights are initialized around $0.58$ with gain $g=18$ and delays in $[2, 5]$\,ms.
+
+During encoding, the bridge is Hebbian-reinforced:
+\begin{equation}
+w_{ij} \leftarrow \operatorname{clip}\bigl(w_{ij} + \eta_{\mathrm{DG}} M,\, w_{\min},\, w_{\max}\bigr),
+\end{equation}
+for active DG neurons and active CA3 excitatory targets, with $\eta_{\mathrm{DG}} = 0.02$.
+
+
+\subsection{Two-Stage Episodic Encoding Protocol}
+\label{sec:encoding}
+
+Encoding proceeds in two continuous stages without resetting membrane potentials between them.
+
+\textbf{Stage 1: Pre-activation} ($T_1 = 10$\,ms, $M=0$). The multimodal cue drives CA3 via the DG bridge. The resulting active set $\mathcal{A}_{\mathrm{pre}}$ is compared against stored engrams $\{E_n\}$ via Jaccard similarity:
+\begin{equation}
+J(\mathcal{A}, E) = \frac{|\mathcal{A} \cap E|}{|\mathcal{A} \cup E|}.
+\end{equation}
+The best match is $j^* = \arg\max_j J(\mathcal{A}_{\mathrm{pre}}, E_j)$. The episode is deemed familiar if $J > 0.15$ or $|\mathcal{A}_{\mathrm{pre}} \cap E_{j^*}| \geq 4$.
+
+\textbf{Stage 2: Plasticity} ($T_2 = 50$\,ms). The neuromodulatory state is set according to familiarity:
+\begin{equation}
+M =
+\begin{cases}
+1, & \text{if familiar}, \\
+2, & \text{if novel}.
+\end{cases}
+\end{equation}
+STDP and assembly reinforcement are applied. An optional replay stage ($T_{\mathrm{replay}} = 5$\,ms, $M=0$) follows for consolidation.
+
+\textbf{Engram storage.} If novel, a new engram $E_{\mathrm{new}} = \mathcal{A}_{\mathrm{CA3}}$ is appended. If familiar, the existing engram is merged:
+\begin{equation}
+E_{j^*} \leftarrow E_{j^*} \cup \mathcal{A}_{\mathrm{CA3}}.
+\end{equation}
+
+
+\subsection{CA1 Readout: Cross-Modal Reconstruction}
+\label{sec:ca1}
+
+CA1 maps CA3 activity back to encoder-space rate vectors. The CA3 rate vector is
+\begin{equation}
+r_i = \frac{N_i^{\mathrm{spike}}}{T/1000}, \qquad i \in \{0, \dots, N_E-1\}.
+\end{equation}
+The CA1 reconstruction is a linear projection followed by ReLU:
+\begin{equation}
+\hat{y} = \max(W_{\mathrm{CA1}} r + b,\, 0).
+\end{equation}
+The output is partitioned into SQL ($\hat{y}[0:100]$), graph ($\hat{y}[100:180]$), and optionally text ($\hat{y}[180:280]$).
+
+\subsubsection{Online Associative Learning}
+
+The target vector $y$ concatenates modality support vectors (binary indicators of which encoder neurons fired). The prediction error is $e = y - \hat{y}$. Using normalized CA3 activity $\tilde{r} = r / \max(1, \|r\|_2)$, the updates are
+\begin{align}
+W_{\mathrm{CA1}} &\leftarrow W_{\mathrm{CA1}} + \eta_{\mathrm{CA1}}\, e\, \tilde{r}^{\top}, \\
+b &\leftarrow b + \eta_{\mathrm{CA1}}\, e,
+\end{align}
+with default $\eta_{\mathrm{CA1}} = 0.03$ over 12 epochs per episode. Weights and biases are clipped to $[-2, 2]$ and $[-1, 1]$, respectively.
+
+\subsubsection{Relation Classification}
+
+A dedicated relation head extracts temporal features from CA3 spikes: normalized rate vector, onset vector, spike-time histogram, and seven timing statistics (active fraction, spike density, mean time, std, min, max, early--late fraction difference). These are concatenated with optional graph reconstruction features into a feature vector $f$.
+
+Relation prototypes $p_r$ are maintained per class and blended toward new observations:
+\begin{equation}
+p_r \leftarrow (1 - \alpha) p_r + \alpha f, \qquad \alpha =
+\begin{cases}
+1.0, & \text{first observation}, \\
+0.85, & \text{otherwise}.
+\end{cases}
+\end{equation}
+A linear head $z = W_r f + b_r$ is trained with one-hot targets. At inference, classification uses cosine similarity to prototypes if available, falling back to the linear head. Confidence is computed as the maximum softmax probability.
+
+
+\subsection{Retrieval with Partial Cues}
+\label{sec:retrieval}
+
+Retrieval accepts arbitrary partial cues---SQL fields, graph edges, text snippets, or combinations---and routes them through the same EC$\rightarrow$DG$\rightarrow$CA3 pathway with $M=0$ (no plasticity). CA3 runs a short pre-activation ($10$\,ms) followed by a completion stage ($40$\,ms). The CA1 readout then produces reconstructions $\hat{q}, \hat{g}, \hat{z}$ and a relation prediction $\hat{r}$.
+
+
+\subsection{Offline Consolidation via Replay}
+\label{sec:consolidation}
+
+To stabilize early engrams without catastrophic forgetting, the system replays stored DG assemblies offline. For each stored episode, the DG assembly is converted to bridge inputs \texttt{dg:$j$} and presented to CA3 for $T_{\mathrm{replay}} = 5$\,ms. The replayed CA3 assembly is reinforced with modulation $0.5$, and the DG$\rightarrow$CA3 bridge is strengthened. Multiple passes over the episode store further stabilize attractor basins.
+
+
+\subsection{Evaluation Metrics}
+\label{sec:metrics}
+
+\subsubsection{Pattern Separation}
+
+For each target episode, retrieval overlap $J_{\mathrm{target}}$ is compared against the best impostor overlap $J_{\mathrm{imp}}^{\max}$. The separation margin is $\Delta_{\mathrm{sep}} = J_{\mathrm{target}} - J_{\mathrm{imp}}^{\max}$. Top-1 accuracy counts episodes where $J_{\mathrm{target}} \geq J_{\mathrm{imp}}^{\max}$.
+
+\subsubsection{Temporal Continuity}
+
+Adjacent episodes (predecessor/successor pairs) and non-adjacent pairs are compared via Jaccard overlap. The continuity margin is
+\begin{equation}
+\Delta_{\mathrm{cont}} = \bar{J}_{\mathrm{adj}} - \bar{J}_{\mathrm{nonadj}}.
+\end{equation}
+Link consistency measures the fraction of episodes whose predecessor/successor pointers are mutually consistent.
+
+\subsubsection{Completion Curve}
+
+SQL cues are progressively reduced to fractions $f \in \{0.2, 0.4, 0.6, 0.8\}$ by dropping fields. The completion score $C(f)$ is the mean Jaccard between retrieved and target assemblies.
+
+\subsubsection{Retention and Interference}
+
+After all episodes are encoded, each episode is re-retrieved. Per-episode retention is $R_i = J(\mathcal{A}_{\mathrm{retrieved},i}, E_i)$. The system reports mean, oldest, and newest retention.
+
+\subsubsection{Modality Dropout}
+
+Retrieval is tested under all available modality subsets. For subset $S$, the score is the mean Jaccard across episodes when only modalities in $S$ are provided as cues.
+
+\subsubsection{Cross-Episode Retrieval Accuracy (CERA)}
+
+CERA measures how well a cue in one modality retrieves content in another. For each episode, a partial SQL cue retrieves the graph edge; a graph cue retrieves the SQL row; and a text cue retrieves both. The mean off-diagonal score is reported.
+
+\subsubsection{Graph Reconstruction Accuracy}
+
+For a target edge $(u, r, v)$, the system evaluates:
+\begin{itemize}
+    \item \textbf{Source/target node accuracy:} top-$k$ overlap between reconstructed and expected neuron sets.
+    \item \textbf{Relation accuracy:} whether $\hat{r} = r$.
+    \item \textbf{Edge accuracy:} product of source, target, and relation correctness.
+    \item \textbf{Temporal delay accuracy:} $1 - |\hat{d}_r - d_r| / \Delta d_{\max}$.
+\end{itemize}
+
+\subsubsection{False Retrieval Rate}
+
+An impostor is counted as a false retrieval if its overlap exceeds the target overlap (within a margin). The false retrieval rate is the fraction of episodes for which this occurs.
+
+
+\subsection{Implementation and Hyperparameters}
+\label{sec:hyperparams}
+
+Table~\ref{tab:hyperparams} summarizes the default hyperparameters used in all experiments unless otherwise stated.
+
+\begin{table}[h]
+\centering
+\caption{Default hyperparameters.}
+\label{tab:hyperparams}
+\begin{tabular}{@{}llr@{}}
+\toprule
+\textbf{Category} & \textbf{Parameter} & \textbf{Value} \\
+\midrule
+Simulation & Euler timestep $\Delta t$ & 0.1\,ms \\
+Simulation & Encoding duration & 10\,ms \\
+Simulation & Retrieval duration & 50\,ms \\
+SQL encoder & Neurons & 100 \\
+SQL encoder & Max spikes per neuron & 5 \\
+Graph encoder & Neurons & 80 \\
+Graph encoder & Active per node & 5 \\
+Text encoder & Neurons & 100 \\
+Text encoder & Sparsity & 5\% \\
+Text encoder & Gamma cycle $G$ & 25\,ms \\
+EC & History window & 10 \\
+DG & Output dimension $K$ & 1200 \\
+DG & Target sparsity & 2\% \\
+DG & Learning rate $\eta$ & 0.02 \\
+DG & Decay $\gamma$ & 0.995 \\
+CA3 & Excitatory $N_E$ & 240 \\
+CA3 & Inhibitory $N_I$ & 60 \\
+CA3 & Homeostatic target $r^*$ & 6\,Hz \\
+CA3 & Homeostatic LR $\eta_h$ & 0.02 \\
+CA3 & Assembly LR $\eta_A$ & 0.03 \\
+STDP & $A_+$ / $A_-$ & 0.5 / 0.48 \\
+STDP & $\tau_+$ / $\tau_-$ & 12\,ms / 12\,ms \\
+DG$\rightarrow$CA3 bridge & Learning rate $\eta_{\mathrm{DG}}$ & 0.02 \\
+DG$\rightarrow$CA3 bridge & Fan-out anchors & 3 \\
+CA1 & Training epochs & 12 \\
+CA1 & Readout LR $\eta_{\mathrm{CA1}}$ & 0.03 \\
+CA1 & Relation LR & 0.05 \\
+CA1 & Relation bins & 12 \\
+Consolidation & Replay duration & 5\,ms \\
+Consolidation & Replay passes & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}

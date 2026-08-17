@@ -1,0 +1,7 @@
+{
+  "pbg_vs_random": 0.6666666666666666,
+  "pbg_vs_zero": 1.0,
+  "random_delay_mean_relation_acc": 0.75,
+  "structured_mean_relation_acc": 0.5,
+  "zero_delay_mean_relation_acc": 0.5
+}

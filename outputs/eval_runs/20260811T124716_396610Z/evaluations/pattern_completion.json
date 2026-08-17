@@ -1,0 +1,13 @@
+{
+  "accuracy": 1.0,
+  "cue_fraction": 0.5333333333333333,
+  "cue_size": 8,
+  "mean_best_impostor_overlap": 0.05043290043290043,
+  "mean_cue_overlap": 1.0,
+  "mean_target_overlap": 0.5333333333333333,
+  "passed": true,
+  "pattern_count": 10,
+  "pattern_size": 15,
+  "retrieved_size_mean": 8.0,
+  "retrieved_size_std": 0.0
+}

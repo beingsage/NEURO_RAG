@@ -1,0 +1,66 @@
+{
+  "episodes": [
+    {
+      "episode_id": 0,
+      "predecessor_episode_id": null,
+      "successor_episode_id": 1,
+      "text": "Alice joins Google"
+    },
+    {
+      "episode_id": 1,
+      "predecessor_episode_id": 0,
+      "successor_episode_id": 2,
+      "text": "Alice becomes manager"
+    },
+    {
+      "episode_id": 2,
+      "predecessor_episode_id": 1,
+      "successor_episode_id": 3,
+      "text": "Alice moves to Microsoft"
+    },
+    {
+      "episode_id": 3,
+      "predecessor_episode_id": 2,
+      "successor_episode_id": null,
+      "text": "Alice becomes CTO"
+    }
+  ],
+  "metrics": {
+    "completion_curve": {
+      "curve": {
+        "0.2": 0.6117424242424243,
+        "0.4": 0.6451048951048951,
+        "0.6": 0.6647727272727273,
+        "0.8": 0.7363636363636363
+      },
+      "mean_completion": 0.6644959207459207
+    },
+    "continuity": {
+      "adjacent_overlap_mean": 0.7306397306397306,
+      "continuity_margin_mean": 0.2154882154882155,
+      "link_consistency": 0.75,
+      "non_adjacent_overlap_mean": 0.5151515151515151
+    },
+    "interference": {
+      "mean_retention": 0.7613636363636364,
+      "newest_retention": 0.8333333333333334,
+      "oldest_retention": 0.5454545454545454,
+      "retention": [
+        0.5454545454545454,
+        0.6666666666666666,
+        1.0,
+        0.8333333333333334
+      ]
+    },
+    "separation": {
+      "best_impostor_overlap_mean": 0.8939393939393939,
+      "false_retrieval_rate": 0.5,
+      "max_pairwise_assembly_overlap": 1.0,
+      "mean_pairwise_assembly_overlap": 0.622895622895623,
+      "num_records": 4,
+      "separation_margin_mean": -0.1325757575757576,
+      "separation_top1_accuracy": 0.5,
+      "target_overlap_mean": 0.7613636363636364
+    }
+  }
+}

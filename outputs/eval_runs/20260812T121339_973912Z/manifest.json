@@ -1,0 +1,12 @@
+{
+  "git_sha": "54315d7",
+  "output_root": "outputs/eval_runs",
+  "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "python_version": "3.13.13",
+  "run_id": "20260812T121339_973912Z",
+  "seed": 42,
+  "site_payload_version": "v1",
+  "spec_suite_version": "v1",
+  "timestamp_utc": "2026-08-12T12:13:39.974638+00:00",
+  "use_text": true
+}

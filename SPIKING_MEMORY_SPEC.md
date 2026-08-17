@@ -1,8 +1,8 @@
 # Polychronous Multi-Modal Spiking Memory
 ## Complete Engineering Specification for Coding Agent
 
-**Version:** 1.0  
-**Date:** 2026-08-08  
+**Version:** 1.1
+**Date:** 2026-08-11
 **Purpose:** Implement a biologically-inspired spiking neural network that binds heterogeneous data modalities (SQL structured data, graph relationships, text) into unified episodic memories via spike-timing-dependent plasticity (STDP).
 
 ---
@@ -23,6 +23,7 @@
 12. [Parameters Reference](#12-parameters-reference)
 13. [Risk Register](#13-risk-register)
 14. [Implementation Checklist](#14-implementation-checklist)
+15. [Version Roadmap and Open Issues](#15-version-roadmap-and-open-issues)
 
 ---
 
@@ -31,6 +32,8 @@
 ### 1.1 Core Claim
 A spiking neural network with delay-heterogeneous synapses and STDP can bind arbitrarily heterogeneous data modalities into unified episodic memories without explicit synchronization, shared embedding spaces, or backpropagation.
 
+Exact SQL and graph stores remain authoritative for scalar facts and canonical records. The neural system is the episodic and associative layer, and every stored engram should retain provenance back to source records and timestamps.
+
 ### 1.2 Architecture Stack
 
 ```
@@ -38,12 +41,12 @@ A spiking neural network with delay-heterogeneous synapses and STDP can bind arb
 │  INPUT LAYER                                                        │
 │  SQL Encoder:     100 neurons (5 fields × 20 population code)      │
 │  Graph Encoder:     80 neurons (4 nodes × 20 ensemble code)        │
-│  Text Encoder:     100 neurons (spiking tokenizer)                 │
+│  Text Encoder:     100 neurons (semantic encoder → spikes)        │
 ├─────────────────────────────────────────────────────────────────────┤
 │  LAYER 2: Entorhinal Convergence (EC)                               │
-│  180 neurons (SQL 100 + Graph 80)                                   │
-│  Computes novelty energy E = ||x - W_ec · h||²                    │
-│  Triggers ACh boost if E > θ_novelty                                │
+│  180 neurons base (280 with text enabled)                           │
+│  Computes novelty score from support, energy, and prediction error  │
+│  Triggers ACh boost when novelty crosses θ_novelty                  │
 ├─────────────────────────────────────────────────────────────────────┤
 │  LAYER 3: Dentate Gyrus (DG) Sparse Separator                       │
 │  900 neurons (5× expansion, 3% activity)                            │
@@ -55,7 +58,7 @@ A spiking neural network with delay-heterogeneous synapses and STDP can bind arb
 │  STDP with neuromodulatory gating (M = 0/1/2)                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │  LAYER 5: CA1 Readout                                               │
-│  180 neurons with back-projections to encoder space                │
+│  180 neurons base (280 with text enabled)                           │
 │  Reconstructs original modality patterns from CA3 engram           │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -237,12 +240,18 @@ $$F(\Delta t) = \begin{cases} A_+ e^{-\Delta t / \tau_+} & \Delta t \geq 0 \\ -A
 - Active per node ($k$): 5 neurons
 - Total graph neurons: 80 (40 source-side + 40 target-side)
 
-### 4.3 Text Encoder (Future Extension)
+### 4.3 Text Encoder
 
-**Design:** Spiking tokenizer with phase-of-firing code
-- Each word: sparse population (100 neurons, 5% active)
-- Word position: gamma phase (0–25 ms within cycle)
-- Sentence: sequence of phase-coded word bursts
+**Version target:** V3
+
+**Design:** Pretrained semantic encoder followed by semantic event compression and spike conversion.
+- Normalize text into tokens and phrases.
+- Produce a dense semantic embedding with a pretrained encoder when available.
+- Compress the semantic event into a sparse intermediate code.
+- Convert the sparse code into phase-coded spike bursts.
+- If a pretrained model is unavailable, fall back to deterministic semantic projection plus character n-gram features.
+
+**Why this matters:** Random or phase-coded token lookup does not provide enough semantic structure for cross-modal binding.
 
 ---
 
@@ -251,22 +260,22 @@ $$F(\Delta t) = \begin{cases} A_+ e^{-\Delta t / \tau_+} & \Delta t \geq 0 \\ -A
 **Function:** Gateway layer that detects novelty and triggers neuromodulation.
 
 **Mechanism:**
-1. Receive concatenated spike patterns from all modality encoders
-2. Compute input energy: $E = \|x_{input}\|^2$ (sum of squared firing rates)
-3. Compare to running average of recent inputs
-4. If $E_{deviation} > \theta_{novelty}$:
-   - Trigger ACh boost: lower CA3 threshold by 5 mV for 50 ms
-   - Set STDP gain $M = 2$
+1. Receive concatenated spike patterns from all available modality encoders.
+2. Convert spikes into rate/support vectors.
+3. Compute a novelty score from support novelty, energy deviation, prediction error, and optional salience.
+4. If novelty is high:
+   - Trigger ACh boost: lower CA3 threshold by 5 mV for 50 ms.
+   - Set STDP gain $M = 2$.
 5. Else:
-   - Normal operation
-   - Set STDP gain $M = 1$
+   - Normal operation.
+   - Set STDP gain $M = 1$.
 
 **Parameters:**
 - $\theta_{novelty}$: 2× standard deviation of recent input energies
 - ACh threshold shift: -5 mV
 - ACh duration: 50 ms
 
-**Implementation note:** For the prototype, this can be simplified to: if episode_id not in memory, set M=2; else M=1.
+**Implementation note:** The production path should keep multi-factor novelty scoring. A single membership test is only acceptable for toy smoke tests.
 
 ---
 
@@ -283,13 +292,13 @@ $$\min_{W, h} \|x - Wh\|_2^2 + \lambda \|h\|_1 + \mu \sum_{i<j} (h_i^\top h_j)^2
 subject to $h \geq 0$, $\|h\|_0 \leq k$
 
 **Parameters:**
-- Input dimension: 180 (SQL 100 + Graph 80)
+- Input dimension: 180 base (280 with text enabled)
 - Output dimension: 900 (5× expansion)
 - Target sparsity: 3% (27 active neurons)
 - $\lambda$: 0.1 (L1 penalty)
 - $\mu$: 0.01 (orthogonality penalty)
 
-**Prototype simplification:** For initial implementation, use pre-trained dictionary or random sparse projection with k-winner-take-all. Upgrade to learned dictionary in Phase 2.
+**Implementation note:** Random or pretrained initialization is acceptable, but the DG dictionary itself must be updated online. k-WTA is the sparse activation rule, not the learning rule.
 
 ---
 
@@ -359,11 +368,11 @@ for t in time_steps:
 **Function:** Map CA3 engram activity back to modality encoder space.
 
 **Architecture:**
-- 180 neurons (matching EC dimension)
+- 180 neurons base (280 with text enabled)
 - Each CA3 E neuron connects to subset of CA1 neurons
 - CA1 neurons connect back to encoder reconstruction layers
 
-**Prototype simplification:** For initial tests, measure CA3 activity overlap rather than full reconstruction. Implement CA1 back-projections in Phase 2.
+**Implementation note:** CA1 back-projections are part of the baseline. CA3 overlap is a diagnostic metric, not a substitute for readout. The CA1 layer should reconstruct modality support and support provenance-backed explanation.
 
 ---
 
@@ -422,6 +431,10 @@ for t in time_steps:
 **Specificity test:**
 - Cue from different episode should NOT activate the target engram
 - Jaccard overlap $< 20\%$ with non-matching engrams
+
+**Exactness boundary:**
+- Exact scalar facts remain the job of the source database.
+- Neural retrieval should answer contextual questions such as "what episode resembles this cue?" not canonical fact lookups.
 
 ---
 
@@ -530,15 +543,16 @@ for t in time_steps:
 
 ### Encoders
 
-| Parameter | SQL | Graph |
-|-----------|-----|-------|
-| Population size | 20/field | 20/node |
-| Total neurons | 100 | 80 |
-| Numeric coding | Gaussian rate | N/A |
-| Categorical coding | WTA hash | N/A |
-| Node coding | N/A | k-of-n (k=5) |
-| Edge coding | N/A | Delay-coded |
-| Stimulation duration | 8–10 ms | 5–8 ms |
+| Parameter | SQL | Graph | Text |
+|-----------|-----|-------|------|
+| Population size | 20/field | 20/node | Sparse semantic code, 5 active neurons/word |
+| Total neurons | 100 | 80 | 100 |
+| Numeric coding | Gaussian rate | N/A | N/A |
+| Categorical coding | WTA hash (baseline; learned entity codes in V3/V5) | N/A | Semantic entity / token embeddings |
+| Node coding | N/A | k-of-n (k=5) | N/A |
+| Edge coding | N/A | Delay-coded | N/A |
+| Semantic coding | N/A | N/A | Pretrained embedding → semantic event compression → phase code |
+| Stimulation duration | 8–10 ms | 5–8 ms | 5 ms/word |
 
 ### CA3 Network
 
@@ -564,6 +578,12 @@ for t in time_steps:
 | Recurrent seizures | 10% | High | Monitor E/I ratio; add homeostatic inhibition |
 | Graph delay ambiguity | 10% | Low | Wider delay separation (3/8/13 ms) |
 | Timing jitter breaks STDP | 15% | Medium | Population coding ($N=20$) reduces jitter by $\sqrt{20} \approx 4.5×$ |
+| STDP saturation / instability | 20% | High | Weight normalization, homeostatic plasticity, bounded STDP, metaplasticity |
+| Catastrophic forgetting | 20% | High | Replay, consolidation, multiple memory timescales, synaptic stability |
+| False attractors | 15% | Medium | Stronger DG separation, higher inhibition, sparse coding, measure FalseRetrievalRate |
+| Missing modality | 20% | Medium | Modality dropout training across all modality subsets |
+| Explainability gap | 15% | Medium | Provenance layer with episode IDs, source records, and timestamps |
+| Throughput bottleneck | 25% | Medium | Event stream deduplication, aggregation, and novelty filtering before SNN ingestion |
 
 ---
 
@@ -601,6 +621,42 @@ for t in time_steps:
 - [ ] Modular sharding (100 CA3 modules)
 - [ ] Conventional cortical autoencoder
 - [ ] Replay-based consolidation
+
+### Phase 7: System Hardening (V3–V5)
+- [ ] Learned entity codes with collision handling and OOV fallback
+- [ ] Log / quantile / multi-resolution numeric coding
+- [ ] Modality dropout tests across SQL, Graph, and Text
+- [ ] Throughput pipeline: event stream → dedupe → aggregation → novelty filter
+- [ ] Provenance lookups for every stored episode
+- [ ] Explicit exact-DB / neural-memory boundary
+- [ ] False-attractor and FalseRetrievalRate reporting
+
+---
+
+## 15. Version Roadmap and Open Issues
+
+The following items correspond to the user-provided problem list. Rows marked as implemented are already present in the current Python path, but the spec should keep them explicit so the architecture does not drift back toward the prototype shortcuts.
+
+| # | Gap | Required change | Target | Current status |
+|---|-----|-----------------|--------|----------------|
+| 1 | Current text encoder is primitive | Pretrained semantic encoder → semantic event compression → spike conversion | V3 | Partial in code; spec updated |
+| 2 | Symbolic retrieval shortcut | Remove dictionary lookup / engram injection; use cue → DG → CA3 recurrence → attractor | V2 | Enforced in current retrieval path |
+| 3 | DG dictionary | Learn `W_DG` online | V2 | Implemented in code; keep it core |
+| 4 | CA1 is incomplete | Build CA3 → CA1 → modality decoders | V3 | Implemented in code; keep it core |
+| 5 | Fixed categorical hashing | Learned entity codes + collision management + OOV representation | V3/V5 | Open |
+| 6 | Numeric encoding does not match enterprise distributions | Log coding, quantile coding, adaptive population coding, multi-resolution coding | V3 | Open |
+| 7 | Graph explosion | Entity memory allocation, sparse dynamic codes, hierarchical graph encoding, hash-based routing, learned graph representations | V3/V5 | Open |
+| 8 | Relation delay collisions | Composite temporal coding: base delay + phase + population identity + burst pattern | V3 | Partial; current relation bursts help but do not solve scale |
+| 9 | CA3 capacity | Sparse recurrent connectivity with approximately `O(kN)` scaling | V2 | Partial; sparse CA3 exists, scaling plan remains |
+| 10 | STDP instability | Weight normalization, homeostatic plasticity, synaptic scaling, metaplasticity, bounded STDP | V2/V3 | Partial; clipping + homeostasis exist |
+| 11 | Catastrophic forgetting | Replay, consolidation, multiple memory timescales, synaptic stability | V5 | Partial; replay exists, long-horizon stability remains |
+| 12 | False attractors | Increase DG separation, CA3 capacity, inhibition, sparse coding, orthogonality; measure `FalseRetrievalRate` | V3 | Open |
+| 13 | False familiarity | Combine reconstruction error, pattern similarity, temporal context, entity novelty, and prediction error | V3 | Implemented in code path |
+| 14 | Missing modality | Modality dropout training over SQL + Graph + Text combinations | V3 | Open |
+| 15 | Temporal noise | Temporal windows, jitter tolerance, phase coding, population redundancy | V3 | Partial; phase and population coding exist |
+| 16 | Enterprise throughput | Kafka / event stream → deduplication → aggregation → novelty filter → SNN | V3 | Open |
+| 17 | Explainability | Parallel episodic provenance layer: CA3 engram → episode ID → source records → timestamps | V3 | Partial; provenance exists in `EpisodeRecord` |
+| 18 | Exactness | Exact SQL remains authoritative; neural memory is for contextual recall only | Baseline / V5 | Must stay explicit in architecture |
 
 ---
 

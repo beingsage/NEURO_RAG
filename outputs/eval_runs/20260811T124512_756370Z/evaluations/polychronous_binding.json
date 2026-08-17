@@ -1,0 +1,21 @@
+{
+  "arrival_errors_ms": {
+    "graph": 0.9837126551573157,
+    "sql": 1.0000000000000004,
+    "text": 0.0
+  },
+  "coincidence": {
+    "within_0.5ms": 0.3333333333333333,
+    "within_1.0ms": 0.6666666666666666,
+    "within_2.0ms": 1.0
+  },
+  "mean_abs_error_ms": 0.6612375517191054,
+  "modality_arrivals_ms": {
+    "graph": 5.123620356542087,
+    "sql": 3.139907701384771,
+    "text": 4.139907701384772
+  },
+  "passed": true,
+  "std_abs_error_ms": 0.4676128343356382,
+  "target_time_ms": 4.139907701384772
+}

@@ -1,0 +1,60 @@
+{
+  "benchmarks": [
+    {
+      "bridge_weight_delta": 0.03438968796505815,
+      "ca3_exc": 240,
+      "consolidate": true,
+      "continuity_links": 0.6666666666666666,
+      "continuity_margin": 0.1164835164835164,
+      "final_assembly_size": 12,
+      "homeostatic_offset_mean": -0.30499999999999994,
+      "mean_completion": 0.5361187423687424,
+      "mean_retention": 0.7897435897435897,
+      "separation_margin": 0.15482295482295486,
+      "separation_top1": 0.6666666666666666,
+      "use_text": true
+    },
+    {
+      "bridge_weight_delta": 0.025585070705388957,
+      "ca3_exc": 240,
+      "consolidate": true,
+      "continuity_links": 0.6666666666666666,
+      "continuity_margin": 0.19085081585081587,
+      "final_assembly_size": 9,
+      "homeostatic_offset_mean": -0.31833333333333336,
+      "mean_completion": 0.5155723905723906,
+      "mean_retention": 0.7424242424242425,
+      "separation_margin": 0.20182595182595184,
+      "separation_top1": 0.6666666666666666,
+      "use_text": false
+    },
+    {
+      "bridge_weight_delta": 0.02267328397696544,
+      "ca3_exc": 480,
+      "consolidate": true,
+      "continuity_links": 0.6666666666666666,
+      "continuity_margin": 0.17291666666666672,
+      "final_assembly_size": 14,
+      "homeostatic_offset_mean": -0.325,
+      "mean_completion": 0.5549030082118317,
+      "mean_retention": 0.7986111111111112,
+      "separation_margin": -0.043981481481481476,
+      "separation_top1": 0.6666666666666666,
+      "use_text": true
+    },
+    {
+      "bridge_weight_delta": 0.03438968796505815,
+      "ca3_exc": 240,
+      "consolidate": false,
+      "continuity_links": 0.6666666666666666,
+      "continuity_margin": 0.1164835164835164,
+      "final_assembly_size": 12,
+      "homeostatic_offset_mean": -0.30499999999999994,
+      "mean_completion": 0.5361187423687424,
+      "mean_retention": 0.7897435897435897,
+      "separation_margin": 0.15482295482295486,
+      "separation_top1": 0.6666666666666666,
+      "use_text": true
+    }
+  ]
+}
