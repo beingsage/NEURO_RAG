@@ -6,7 +6,7 @@ This repository explores how structured data (SQL), relational knowledge (graph)
 
 ## Demo video
 
-https://drive.google.com/uc?export=download&id=1kbvKZQhluLmtbM022odldp5Qk5wYw11T
+https://github.com/user-attachments/assets/df940053-5017-4940-bec4-19834507f77e
 
 
 ## Project overview
