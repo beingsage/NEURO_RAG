@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-from generate_research_site_data import save_data, stage_example, v2_v3_data, v4_v5_data, v6_data
+from tools.generate_research_site_data import save_data, stage_example, v2_v3_data, v4_v5_data, v6_data
 from spiking_multimodal_memory import DelayedSynapse, GraphEncoder, MultiModalMemory, SQLEncoder
 
 
