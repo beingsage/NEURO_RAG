@@ -8,6 +8,11 @@ This repository explores how structured data (SQL), relational knowledge (graph)
 
 https://github.com/user-attachments/assets/df940053-5017-4940-bec4-19834507f77e
 
+## Overview images
+
+![Intro](misc/INTRO.png)
+
+![Tests](misc/TESTS.png)
 
 ## Project overview
 
@@ -30,6 +35,36 @@ The implementation is centered around the main model in `spiking_multimodal_memo
 - Engram storage, familiarity detection, and replay-style memory updates
 - Evaluation scripts for stability, reconstruction quality, and binding performance
 - Research outputs and result summaries under the `outputs/` directory
+
+<!-- AUTO-GENERATED:START -->
+## Latest benchmark results
+
+- Run ID: `20260812T121339_973912Z`
+- Date: `2026-08-12T12:13:39.974638+00:00`
+- Git SHA: `54315d7`
+
+| Evaluation | Key metric | Result |
+| --- | --- | --- |
+| Pattern completion | acc=1.0, overlap=0.5333333333333333 | PASS |
+| Engram stability | mean_jaccard=0.8310679516561871 | PASS |
+| Polychronous binding | mean_abs_error_ms=0.6612375517191054 | PASS |
+| STDP causality | real_minus_shuffled=1.6581878311635259 | PASS |
+| Encoder reconstructibility | age_err=0.4453742135943308, delay_err=0.0ms | PASS |
+
+
+## Latest figures
+
+![summary_bars.png](outputs/eval_runs/20260812T121339_973912Z/figures/summary_bars.png)
+![completion_curve.png](outputs/eval_runs/20260812T121339_973912Z/figures/completion_curve.png)
+![pbg_relation_acc.png](outputs/eval_runs/20260812T121339_973912Z/figures/pbg_relation_acc.png)
+![binding_index.png](outputs/eval_runs/20260812T121339_973912Z/figures/binding_index.png)
+![cera_heatmap.png](outputs/eval_runs/20260812T121339_973912Z/figures/cera_heatmap.png)
+
+
+- Latest run directory: `20260812T121339_973912Z`
+- Regenerate this section with: `python tools/update_readme_from_latest_run.py`
+
+<!-- AUTO-GENERATED:END -->
 
 ## Repository structure
 
