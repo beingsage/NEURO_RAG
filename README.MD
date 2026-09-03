@@ -6,12 +6,8 @@ This repository explores how structured data (SQL), relational knowledge (graph)
 
 ## Demo video
 
-<div align="center">
-  <video controls width="100%" playsinline>
-    <source src="misc/VIDEO.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</div>
+https://drive.google.com/uc?export=download&id=1kbvKZQhluLmtbM022odldp5Qk5wYw11T
+
 
 ## Project overview
 
